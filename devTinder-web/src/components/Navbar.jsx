@@ -3,15 +3,15 @@ import { useSelector } from "react-redux";
 
 const Navbar = () => {
   //Subscribing to the user:--->
-  const {user} = useSelector((state)=>state.user);
-  
+  const { user } = useSelector((state) => state.user);
+
   return (
-    
-      <div className="navbar bg-base-300">
-        <div className="flex-1">
-          <a className="btn btn-ghost text-xl">👩‍💻 DevTinder</a>
-        </div>
-     {user&&<div className="flex-none gap-2">
+    <div className="navbar bg-base-300">
+      <div className="flex-1">
+        <a className="btn btn-ghost text-xl">👩‍💻 DevTinder</a>
+      </div>
+      {user && (
+        <div className="flex-none gap-2">
           <div className="form-control">{user.firstName}</div>
           <div className="dropdown dropdown-end mx-5">
             <div
@@ -20,10 +20,7 @@ const Navbar = () => {
               className="btn btn-ghost btn-circle avatar"
             >
               <div className="w-10 rounded-full">
-                <img
-                  alt="user Image"
-                  src={user.photoUrl}
-                />
+                <img alt="user Image" src={user.photoUrl} />
               </div>
             </div>
             <ul
@@ -44,8 +41,9 @@ const Navbar = () => {
               </li>
             </ul>
           </div>
-        </div>}
-      </div>
+        </div>
+      )}
+    </div>
   );
 };
 

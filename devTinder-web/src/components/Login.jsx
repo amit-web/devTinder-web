@@ -18,7 +18,7 @@ const Login = () => {
       console.log(Userdata.data.user);
 
     dispatch(addUser(Userdata.data.user));
-    navigate("/feed")
+    return navigate("/")
   }
   return (
     <div className="card bg-info w-96 shadow-xl m-auto my-4 ">
