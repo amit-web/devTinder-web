@@ -6,20 +6,29 @@ import { BASE_URL } from "../../utils/constant";
 import { useNavigate } from "react-router-dom";
 
 const Login = () => {
-  const [emailId,setEmailId] = useState("dhoni77@gmail.com")
-  const [password,setPassword] = useState("Dhoni@123")
-  const dispatch = useDispatch()
+  const [emailId, setEmailId] = useState("dhoni77@gmail.com");
+  const [password, setPassword] = useState("Dhoni@123");
+  const [error, SetError] = useState("");
+  const dispatch = useDispatch();
   const navigate = useNavigate();
-  const handleLogin=async()=>{
-     const Userdata = await axios.post(BASE_URL+'/login',{
-        emailId,
-        password
-     },{withCredentials:true});
-      console.log(Userdata.data.user);
+  const handleLogin = async () => {
+    try {
+      const res = await axios.post(
+        BASE_URL + "/login",
+        {
+          emailId,
+          password,
+        },
+        { withCredentials: true }
+      );
+      console.log(res.data.user);
+      dispatch(addUser(res?.data?.user));
+      return navigate("/");
+    } catch (err) {
+      SetError(err?.response?.data || "something Went wrong");
+    }
+  };
 
-    dispatch(addUser(Userdata.data.user));
-    return navigate("/")
-  }
   return (
     <div className="card bg-info w-96 shadow-xl m-auto my-4 ">
       <div className="card-body text">
@@ -33,8 +42,7 @@ const Login = () => {
             value={emailId}
             placeholder="Type here"
             className="input input-bordered w-full max-w-xs text-black"
-            onChange={(e)=>setEmailId(e.target.value)}
-
+            onChange={(e) => setEmailId(e.target.value)}
           />
         </label>
         <label className="form-control w-full max-w-xs my-2">
@@ -46,11 +54,14 @@ const Login = () => {
             value={password}
             placeholder="Type here"
             className="input input-bordered w-full max-w-xs text-black"
-            onChange={(e)=>setPassword(e.target.value)}
+            onChange={(e) => setPassword(e.target.value)}
           />
         </label>
+        <p className="text-red-600">{error}</p>
         <div className="card-actions justify-center my-2">
-          <button className="btn btn-primary " onClick={handleLogin}>Login</button>
+          <button className="btn btn-primary " onClick={handleLogin}>
+            Login
+          </button>
         </div>
       </div>
     </div>
