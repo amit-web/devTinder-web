@@ -15,7 +15,7 @@ const Body = () => {
       const loggedInuUser = await axios.get(BASE_URL + "/profile/view", {
         withCredentials: true,
       });
-     // console.log(loggedInuUser.data)
+      // console.log(loggedInuUser.data)
       dispatch(addUser(loggedInuUser.data));
     } catch (err) {
       if (err.status === 401) {
@@ -24,9 +24,10 @@ const Body = () => {
       console.log(err.message);
     }
   };
+
   useEffect(() => {
     gettingLoggedInUser();
-  },[]);
+  }, []);
 
   return (
     <div>

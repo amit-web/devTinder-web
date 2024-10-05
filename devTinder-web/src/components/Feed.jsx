@@ -7,7 +7,7 @@ import FeedCard from "./FeedCard";
 
 export const Feed = () => {
   const feed = useSelector((store)=> store.feed);
-
+  console.log(feed)
   const dispatch = useDispatch();
   const gettingFeed = async () => {
     try {
@@ -26,10 +26,15 @@ export const Feed = () => {
     gettingFeed();
   }, []);
 
+  if(!feed) return;
+  if(feed.length<=0) return <h1 className="flex justify-center my-4 ">No New USer found</h1>
+
   return (
     feed&&(
-      <div >
-      <FeedCard user={feed[0]} />
+      <div className="flex justify-center my-10">
+       
+       <FeedCard   user={feed[0]} />
+  
     </div>
     )
    
