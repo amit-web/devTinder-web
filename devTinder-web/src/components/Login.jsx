@@ -12,109 +12,160 @@ const Login = () => {
   const [lastName, setLastName] = useState("");
   const [error, SetError] = useState("");
   const [isLogin, setIsLogin] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
   const handleLogin = async () => {
+    SetError("");
+    setIsLoading(true);
     try {
       const res = await axios.post(
         BASE_URL + "/login",
-        {
-          emailId,
-          password,
-        },
+        { emailId, password },
         { withCredentials: true }
       );
-      console.log(res.data.user);
       dispatch(addUser(res?.data?.user));
       setIsLogin(true);
-      return navigate("/");
+      navigate("/");
     } catch (err) {
-      SetError(err?.response?.data || "something Went wrong");
+      SetError(err?.response?.data || "Something went wrong");
+    } finally {
+       setIsLoading(false);
     }
   };
-  const handleSignUp = async()=>{
-    try{
-        const res = await axios.post(BASE_URL+"/signup",{firstName,lastName,emailId,password},{withCredentials: true})
-        console.log(res.data.data)
-        dispatch(addUser(res?.data?.data))
-        setIsLogin(true)
-        return navigate("/profile")
-    }
-    catch(err){
-      SetError(err?.response?.data || "something Went Wrong")
-    }
-  }
-  return (
-    <div className="card bg-info w-96 shadow-xl m-auto my-4 ">
-      <div className="card-body text">
-        <h2 className="card-title justify-center">
-          {isLogin ? "Login" : "SignUp"}
-        </h2>
-        {!isLogin && (
-          <>
-            <label className="form-control w-full max-w-xs">
-              <div className="label">
-                <span className="label-text text-white">First Name</span>
-              </div>
-              <input
-                type="text"
-                value={firstName}
-                placeholder="Type here"
-                className="input input-bordered w-full max-w-xs text-black"
-                onChange={(e) => setFirstName(e.target.value)}
-              />
-            </label>
-            <label className="form-control w-full max-w-xs my-2">
-              <div className="label">
-                <span className="label-text text-white">Last Name</span>
-              </div>
-              <input
-                type="text"
-                value={lastName}
-                placeholder="Type here"
-                className="input input-bordered w-full max-w-xs text-black"
-                onChange={(e) => setLastName(e.target.value)}
-              />
-            </label>
-          </>
-        )}
-        <label className="form-control w-full max-w-xs">
-          <div className="label">
-            <span className="label-text text-white">Email ID</span>
-          </div>
-          <input
-            type="text"
-            value={emailId}
-            placeholder="Type here"
-            className="input input-bordered w-full max-w-xs text-black"
-            onChange={(e) => setEmailId(e.target.value)}
-          />
-        </label>
-        <label className="form-control w-full max-w-xs my-2">
-          <div className="label">
-            <span className="label-text text-white">Password</span>
-          </div>
-          <input
-            type="password"
-            value={password}
-            placeholder="Type here"
-            className="input input-bordered w-full max-w-xs text-black"
-            onChange={(e) => setPassword(e.target.value)}
-          />
-        </label>
-        <p className="text-red-600">{error}</p>
 
-        <p></p>
-        <div className="card-actions justify-center my-2">
-          <button className="btn btn-primary " onClick={isLogin?handleLogin:handleSignUp}>
-            {isLogin ? "Login" : "SignUp"}
-          </button>
+  const handleSignUp = async () => {
+    SetError("");
+    setIsLoading(true);
+    try {
+      const res = await axios.post(
+        BASE_URL + "/signup",
+        { firstName, lastName, emailId, password },
+        { withCredentials: true }
+      );
+      dispatch(addUser(res?.data?.data));
+      setIsLogin(true);
+      navigate("/profile");
+    } catch (err) {
+      SetError(err?.response?.data || "Something went wrong");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Background Animation Styles
+  const animationStyles = `
+    @keyframes move {
+      0% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(30px, -50px) scale(1.1); }
+      66% { transform: translate(-20px, 20px) scale(0.9); }
+      100% { transform: translate(0, 0) scale(1); }
+    }
+    .animate-blob {
+      animation: move 8s infinite alternate ease-in-out;
+    }
+  `;
+
+  return (
+    /* Main Wrapper: Fixed height and hidden overflow to prevent scroll */
+    <div className="relative flex flex-col flex-1 justify-center items-center bg-[#020617] overflow-hidden min-h-[calc(100vh-130px)] px-4">
+      <style>{animationStyles}</style>
+
+      {/* Animated Background Blobs */}
+      <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-purple-600/20 rounded-full blur-[80px] animate-blob"></div>
+      <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-blue-600/20 rounded-full blur-[100px] animate-blob" style={{animationDelay: '2s'}}></div>
+
+      {/* Glass Card: Height reduced using p-8 and space-y-4 */}
+      <div className="relative z-10 w-full max-w-[400px] bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-3xl shadow-2xl p-8 transition-all duration-500">
+        
+        <div className="text-center mb-6">
+          <h2 className="text-3xl font-bold text-white tracking-tight">
+            {isLogin ? "Welcome Back" : "Create Account"}
+          </h2>
+          <div className="h-1 w-12 bg-gradient-to-r from-purple-500 to-pink-500 mx-auto mt-2 rounded-full opacity-80"></div>
         </div>
-        <p
-          className="cursor-pointer text-center py-2"
-          onClick={() => setIsLogin(!isLogin)}
+
+        <div className="space-y-4">
+          {!isLogin && (
+            <div className="flex gap-3">
+              <div className="flex-1">
+                <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1 ml-1 tracking-wider">First Name</label>
+                <input
+                  type="text"
+                  value={firstName}
+                  placeholder="John"
+                  className="w-full bg-white/[0.05] border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:ring-1 focus:ring-purple-500/50 transition-all"
+                  onChange={(e) => setFirstName(e.target.value)}
+                />
+              </div>
+              <div className="flex-1">
+                <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1 ml-1 tracking-wider">Last Name</label>
+                <input
+                  type="text"
+                  value={lastName}
+                  placeholder="Doe"
+                  className="w-full bg-white/[0.05] border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:ring-1 focus:ring-purple-500/50 transition-all"
+                  onChange={(e) => setLastName(e.target.value)}
+                />
+              </div>
+            </div>
+          )}
+
+          <div>
+            <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1 ml-1 tracking-wider">Email ID</label>
+            <input
+              type="text"
+              value={emailId}
+              placeholder="name@company.com"
+              className="w-full bg-white/[0.05] border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:ring-1 focus:ring-purple-500/50 transition-all"
+              onChange={(e) => setEmailId(e.target.value)}
+            />
+          </div>
+
+          <div>
+            <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1 ml-1 tracking-wider">Password</label>
+            <input
+              type="password"
+              value={password}
+              placeholder="••••••••"
+              className="w-full bg-white/[0.05] border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:ring-1 focus:ring-purple-500/50 transition-all"
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </div>
+        </div>
+
+        {error && (
+          <div className="mt-4 p-2.5 bg-red-500/10 border border-red-500/20 rounded-lg">
+            <p className="text-red-400 text-xs text-center font-medium">{error}</p>
+          </div>
+        )}
+
+        <button
+          className="w-full mt-8 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-bold py-3 rounded-xl shadow-lg shadow-purple-900/20 transition-all active:scale-[0.98] disabled:opacity-70 flex justify-center items-center"
+          onClick={isLogin ? handleLogin : handleSignUp}
+          disabled={isLoading}
         >
-          {isLogin ? "New user? Signup Here" : "Existing user Login Here"}
+          {isLoading ? (
+            <svg className="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"></circle>
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+          ) : (
+            isLogin ? "Sign In" : "Sign Up"
+          )}
+        </button>
+
+        <p
+          className="cursor-pointer text-center mt-6 text-gray-400 hover:text-white transition-colors text-xs font-medium"
+          onClick={() => { if(!isLoading) { setIsLogin(!isLogin); SetError(""); } }}
+        >
+          {isLogin ? (
+            <>New here? <span className="text-purple-400 font-bold">Create an account</span></>
+          ) : (
+            <>Already a member? <span className="text-purple-400 font-bold">Login Here</span></>
+          )}
         </p>
       </div>
     </div>
